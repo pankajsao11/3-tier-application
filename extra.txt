@@ -1,0 +1,44 @@
+//subnet creation by simple method
+resource "aws_subnet" "web" {
+  provider                = aws.primary
+  vpc_id                  = aws_vpc.app_vpc.id
+  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "us-east-1a"
+
+  tags = {
+    Name = "public-subnet"
+  }
+}
+
+resource "aws_subnet" "app" {
+  provider                = aws.primary
+  vpc_id                  = aws_vpc.app_vpc.id
+  cidr_block              = "10.0.2.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "us-east-1b"
+
+  tags = {
+    Name = "app-subnet"
+}}
+
+#count = length(aws_subnet.public)
+  #subnet_id      = aws_subnet.public[count.index].id
+
+
+##for_each       = { for index, subnet in aws_subnet.public : index => subnet }
+explanation: 
+1. for index, subnet in aws_subnet.public:
+
+This part initiates a for expression, which is a way to create a collection (like a map or list) by iterating over another collection.
+aws_subnet.public is the collection we're iterating over. In this case, it's a tuple (list-like structure) of aws_subnet resources created by Terraform's count meta-argument.
+index and subnet are variables that represent each element of the aws_subnet.public tuple during each iteration.
+index will hold the numerical index (position) of the current subnet in the tuple (starting from 0).
+subnet will hold the actual aws_subnet resource instance at that index.
+2. : index => subnet:
+
+This part defines how each element of the new collection should be constructed.
+The colon (:) separates the iteration part from the result expression.
+index => subnet is a key-value pair that will be added to the new map.
+index becomes the key in the map.
+subnet becomes the value associated with that key.  
