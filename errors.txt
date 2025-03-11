@@ -1,0 +1,42 @@
+//This file contains all the errors and solution which encountered during this project
+
+│ #Error1: Invalid for_each argument
+│
+│   on vpc.tf line 62, in resource "aws_route_table_association" "public":
+│   62:   for_each       = aws_subnet.public
+│     ├────────────────
+│     │ aws_subnet.public is tuple with 2 elements
+│
+│ The given "for_each" argument value is unsuitable: the "for_each" argument must be a map, or set of strings,   
+│ and you have provided a value of type tuple.
+
+#sol: Understanding the Problem:
+
+for_each Meta-Argument: The for_each meta-argument in Terraform expects a map or a set of strings.
+Tuple: When you use count in a resource definition, Terraform creates a tuple (a list-like structure) of resource instances.
+The Error: The error message clearly states that aws_subnet.public is a tuple with 2 elements, and for_each cannot accept a tuple.
+How to Fix It:
+
+Use for_each with a Map or Set:
+
+If you're using count to create your subnets, you can still use for_each in your route table association by creating a map or set that corresponds to your subnets.
+If you have a map or set of names for your subnets, you can use that.
+If you do not have a map or set, you can make one using the range function, and the length function.
+Terraform
+
+resource "aws_route_table_association" "public" {
+  for_each       = {for index, subnet in aws_subnet.public : index => subnet}
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.public.id
+}
+This will convert the tuple into a map, where the key is the index of the subnet, and the value is the subnet itself.
+Using the count.index
+
+If you are associating the route table associations with the subnets in the same order that they are created, you can use the count.index meta-argument.
+Terraform
+
+resource "aws_route_table_association" "public" {
+  count          = length(aws_subnet.public)
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
+}
