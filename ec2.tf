@@ -1,8 +1,8 @@
 resource "aws_instance" "web_vm" {
   provider                    = aws.primary
-  ami                         = ""
+  ami                         = data.aws_ami.linux_Server_pr.id
   instance_type               = "t2.micro"
-  key_name                    = ""
+  key_name                    = "demo-key"
   subnet_id                   = aws_subnet.public[0].id
   security_groups             = [aws_security_group.web_sg.id]
   associate_public_ip_address = true
@@ -19,9 +19,9 @@ resource "aws_instance" "web_vm" {
 
 resource "aws_instance" "app_vm" {
   provider                    = aws.primary
-  ami                         = ""
+  ami                         = data.aws_ami.linux_Server_pr.id
   instance_type               = "t2.micro"
-  key_name                    = ""
+  key_name                    = "demo-key"
   subnet_id                   = aws_subnet.public[1].id
   security_groups             = [aws_security_group.app_sg.id]
   associate_public_ip_address = true
@@ -43,8 +43,9 @@ resource "aws_instance" "app_vm" {
 
 resource "aws_instance" "web_vm_sr" {
   provider        = aws.secondary
-  ami             = ""
-  instance_type   = ""
+  ami             = data.aws_ami.linux_Server_sr.id
+  instance_type   = "t2.micro"
+  key_name        = "3tier-ec2"
   subnet_id       = aws_subnet.public_sr[0].id
   security_groups = [aws_security_group.web_sg_sr.id]
 
@@ -60,9 +61,9 @@ resource "aws_instance" "web_vm_sr" {
 
 resource "aws_instance" "app_vm_sr" {
   provider                    = aws.secondary
-  ami                         = ""
+  ami                         = data.aws_ami.linux_Server_sr.id
   instance_type               = "t2.micro"
-  key_name                    = ""
+  key_name                    = "3tier-ec2"
   subnet_id                   = aws_subnet.public_sr[1].id
   security_groups             = [aws_security_group.app_sg_sr.id]
   associate_public_ip_address = true

@@ -14,7 +14,7 @@ resource "aws_subnet" "public" {
   count                   = 2
   vpc_id                  = aws_vpc.app_vpc.id
   cidr_block              = var.subnet_cidr_blocks[count.index]
-  availability_zone       = var.availability_zones[count.index]
+  availability_zone       = var.availability_zones_pr[count.index]
   map_public_ip_on_launch = true
 
   tags = {
@@ -71,7 +71,7 @@ resource "aws_route_table_association" "public" {
 
 resource "aws_vpc" "app_vpc_sr" {
   provider   = aws.secondary
-  cidr_block = "10.0.0.0/20"
+  cidr_block = "10.0.0.0/22"
 
   tags = {
     name = "multi-tier-vpc"
@@ -83,7 +83,7 @@ resource "aws_subnet" "public_sr" {
   count                   = 2
   vpc_id                  = aws_vpc.app_vpc_sr.id
   cidr_block              = var.subnet_cidr_blocks[count.index]
-  availability_zone       = var.availability_zones[count.index]
+  availability_zone       = var.availability_zones_sr[count.index]
   map_public_ip_on_launch = true
 
   tags = {
@@ -96,7 +96,7 @@ resource "aws_subnet" "database_sr" {
   vpc_id                  = aws_vpc.app_vpc_sr.id
   cidr_block              = "10.0.3.0/24"
   map_public_ip_on_launch = false
-  availability_zone       = "us-west-1c"
+  availability_zone       = "us-west-2c"
 
   tags = {
     Name = "database-subnet-sr"

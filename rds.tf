@@ -1,14 +1,16 @@
 # launch an rds instance in primary region
 resource "aws_db_instance" "my_app_db" {
-  allocated_storage    = 15
-  db_name              = var.db_name
-  engine               = "mysql"
-  engine_version       = "8.0"
-  instance_class       = "db.m5d.large"
-  username             = "foo"
-  password             = "foobarbaz"
-  parameter_group_name = "default.mysql8.0"
-  skip_final_snapshot  = true
+  allocated_storage       = 15
+  db_name                 = var.db_name
+  engine                  = "mysql"
+  engine_version          = "8.0"
+  instance_class          = "db.m5d.large"
+  username                = var.username
+  password                = var.password
+  parameter_group_name    = "default.mysql8.0"
+  skip_final_snapshot     = true
+  backup_retention_period = 7
+  multi_az                = false
 }
 
 # create database subnet group for primary region
@@ -24,15 +26,17 @@ resource "aws_db_subnet_group" "database_subnet_group" {
 
 # launch an rds instance in secondary region
 resource "aws_db_instance" "my_app_srdb" {
-  allocated_storage    = 15
-  db_name              = "${var.db_name}-sr"
-  engine               = "mysql"
-  engine_version       = "8.0"
-  instance_class       = "db.m5d.large"
-  username             = "foo"
-  password             = "foobarbaz"
-  parameter_group_name = "default.mysql8.0"
-  skip_final_snapshot  = true
+  allocated_storage       = 15
+  db_name                 = "${var.db_name}-sr"
+  engine                  = "mysql"
+  engine_version          = "8.0"
+  instance_class          = "db.m5d.large"
+  username                = var.username
+  password                = var.password
+  parameter_group_name    = "default.mysql8.0"
+  skip_final_snapshot     = true
+  backup_retention_period = 7
+  multi_az                = false
 }
 
 # create database subnet group for Secondary region
