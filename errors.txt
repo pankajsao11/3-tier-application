@@ -40,3 +40,86 @@ resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }
+
+
+  #Error2: Invalid for_each argument
+│
+│   on alb.tf line 7, in resource "aws_lb" "primary_alb":
+│    7:   for_each           = aws_subnet.public
+│     ├────────────────
+│     │ aws_subnet.public is tuple with 2 elements
+│
+│ The given "for_each" argument value is unsuitable: the "for_each" argument must be a map, or set of strings,   
+│ and you have provided a value of type tuple.
+
+
+##sol: Understanding the Problem:
+
+aws_subnet.public Tuple: Your aws_subnet.public resource is being created using the count meta-argument, which results in a tuple (a list-like structure) of subnet resources.
+for_each Requirement: The for_each meta-argument requires either a map or a set of strings.
+Incompatibility: You're directly assigning the tuple aws_subnet.public to for_each, which is incompatible.
+Solutions:
+
+Convert Tuple to Map (Recommended if you need to iterate based on subnets):
+
+Terraform
+
+resource "aws_lb" "primary_alb" {
+  for_each = {for index, subnet in aws_subnet.public : index => subnet}
+  # ... rest of your ALB configuration ...
+  subnets = [for subnet in values(each.value) : subnet.id]
+}
+This uses the for expression to convert the aws_subnet.public tuple into a map where the keys are indices and the values are the subnet resources.
+The subnets variable in the alb resource, needs to be a list of subnet id's. So the values function is used to get the subnet object, and then a for loop is used to get the id of each subnet.
+Using the count.index (If you don't need to iterate based on subnets):
+
+It is very uncommon to have an alb for each subnet. ALBs are usually in multiple subnets for high availability. Therefore, it is most likely that you do not want to use for_each in this scenario.
+If you are just wanting to use the public subnets for the alb, you can use the subnets variable, and pass it a list of the subnet IDs.
+Terraform
+
+resource "aws_lb" "primary_alb" {
+  # ... rest of your ALB configuration ...
+  subnets = aws_subnet.public[*].id
+}
+This will pass a list of all of the public subnet IDs to the alb.
+
+
+
+│# Error3: Incorrect attribute value type
+│
+│   on alb.tf line 9, in resource "aws_lb" "primary_alb":
+│    9:   subnets            = [aws_subnet.public[*].id, aws_subnet.database.id]
+│     ├────────────────
+│     │ aws_subnet.database.id is a string
+│     │ aws_subnet.public is tuple with 2 elements
+│
+│ Inappropriate value for attribute "subnets": element 0: string required.
+
+
+##sol: Understanding the Problem:
+
+Tuple vs. String:
+aws_subnet.public[*].id results in a tuple (list) of string subnet IDs.
+aws_subnet.database.id is a single string subnet ID.
+Type Mismatch: Terraform's subnets attribute expects a list of strings, not a mix of a tuple and a string.
+Solutions:
+
+Combine the Lists Correctly:
+
+Use the concat() function to combine the tuple into a single list.
+Terraform
+
+resource "aws_lb" "primary_alb" {
+  provider           = aws.primary
+  name               = "primary-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.app_sg.id]
+  subnets            = concat(aws_subnet.public[*].id, [aws_subnet.database.id])
+
+  tags = {
+    Name = "primary-alb"
+  }
+}
+concat() takes multiple lists as arguments and returns a single combined list.
+[aws_subnet.database.id] converts the single string into a list containing one element.
