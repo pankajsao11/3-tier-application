@@ -33,7 +33,12 @@ variable "subnet_cidr_blocks" {
   type        = list(string)
 }
 
-variable "availability_zones" {
+variable "availability_zones_pr" {
+  description = "List of availability zones"
+  type        = list(string)
+}
+
+variable "availability_zones_sr" {
   description = "List of availability zones"
   type        = list(string)
 }

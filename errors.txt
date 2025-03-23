@@ -123,3 +123,82 @@ resource "aws_lb" "primary_alb" {
 }
 concat() takes multiple lists as arguments and returns a single combined list.
 [aws_subnet.database.id] converts the single string into a list containing one element.
+
+╷
+│ # Error4: creating RDS DB Instance (terraform-20250323134902666300000001): operation error RDS: CreateDBInstance, 
+https response error StatusCode: 400, RequestID: 1c1f5d6f-4baf-4198-a98f-664eedaeee5f, api error InvalidParameterValue: DBName must begin with a letter and contain only alphanumeric characters.
+│
+│   with aws_db_instance.my_app_db,
+│   on rds.tf line 2, in resource "aws_db_instance" "my_app_db":
+│    2: resource "aws_db_instance" "my_app_db" {
+│
+╵##sol: The name "WebApp-db" was invalid here, as rds naming conventions supports only alphanumeric (a-z, lowercase)
+
+###errors which needs to be resolved next time:
+
+│ Error: file provisioner error
+│
+│   with aws_instance.app_vm_sr,
+│   on ec2.tf line 75, in resource "aws_instance" "app_vm_sr":
+│   75:   provisioner "file" {
+│
+│ Missing connection configuration for provisioner.
+╵
+╷
+│ Error: creating EC2 NAT Gateway: operation error EC2: CreateNatGateway, https response error StatusCode: 400, RequestID: b4a856cb-ac27-48fa-b3b6-6157bb4fc1ee, api error InvalidSubnet: The subnet ID 'subnet-072bd104d94de229b' does not exist
+│
+│   with aws_nat_gateway.dev_natgw_sr,
+│   on nat-gw.tf line 33, in resource "aws_nat_gateway" "dev_natgw_sr":
+│   33: resource "aws_nat_gateway" "dev_natgw_sr" {
+│
+╵
+╷
+│ Error: creating RDS DB Instance (terraform-20250323175057451000000002): operation error RDS: CreateDBInstance, 
+https response error StatusCode: 400, RequestID: 766064fa-bd20-4cdf-b8d3-e8e5df282c50, api error InvalidParameterValue: The parameter MasterUserPassword is not a valid password. Only printable ASCII characters besides '/', '@', '"', ' ' may be used.
+│
+│   with aws_db_instance.my_app_db,
+│   on rds.tf line 2, in resource "aws_db_instance" "my_app_db":
+│    2: resource "aws_db_instance" "my_app_db" {
+│
+╵
+╷
+│ Error: creating RDS DB Subnet Group (pr-db-subnet): operation error RDS: CreateDBSubnetGroup, https response error StatusCode: 400, RequestID: 801ef205-0016-4dce-a576-71d24a2472e2, DBSubnetGroupDoesNotCoverEnoughAZs: The DB 
+subnet group doesn't meet Availability Zone (AZ) coverage requirement. Current AZ coverage: us-east-1c. Add subnets to cover at least 2 AZs.
+│
+│   with aws_db_subnet_group.database_subnet_group,
+│   on rds.tf line 17, in resource "aws_db_subnet_group" "database_subnet_group":
+│   17: resource "aws_db_subnet_group" "database_subnet_group" {
+│
+╵
+╷
+│ Error: creating RDS DB Instance (terraform-20250323175057451000000003): operation error RDS: CreateDBInstance, 
+https response error StatusCode: 400, RequestID: 8fba77f0-123d-4c97-8013-7c3e0d2528a6, api error InvalidParameterValue: DBName must begin with a letter and contain only alphanumeric characters.
+│
+│   with aws_db_instance.my_app_srdb,
+│   on rds.tf line 28, in resource "aws_db_instance" "my_app_srdb":
+│   28: resource "aws_db_instance" "my_app_srdb" {
+│
+╵
+╷
+│ Error: creating RDS DB Subnet Group (sr-db-subnet): operation error RDS: CreateDBSubnetGroup, https response error StatusCode: 400, RequestID: 113aeff5-21b0-4e19-841d-8a0f7402f786, api error InvalidParameterValue: Some input subnets in :[subnet-0859dbd3f4744bf6d] are invalid.
+│
+│   with aws_db_subnet_group.db_subnet_group,
+│   on rds.tf line 43, in resource "aws_db_subnet_group" "db_subnet_group":
+│   43: resource "aws_db_subnet_group" "db_subnet_group" {
+│
+╵
+╷
+│ Error: creating Security Group (terraform-20250323175059293700000001): operation error EC2: CreateSecurityGroup, https response error StatusCode: 400, RequestID: e9506432-05ee-4c64-80a5-cc2197c458b7, api error InvalidVpcID.NotFound: The vpc ID 'vpc-02c90d36d68195329' does not exist
+│
+│   with aws_security_group.db_sg_sr,
+│   on security-group.tf line 134, in resource "aws_security_group" "db_sg_sr":
+│  134: resource "aws_security_group" "db_sg_sr" {
+│
+╵
+╷
+│ Error: waiting for EC2 VPC Peering Connection (pcx-0c79e80db03a6b08e) create: unexpected state 'failed', wanted target 'active, pending-acceptance'. last error: Failed due to incorrect VPC-ID, Account ID, or overlapping CIDR range
+│
+│   with aws_vpc_peering_connection.peer,
+│   on vpc-peering.tf line 1, in resource "aws_vpc_peering_connection" "peer":
+│    1: resource "aws_vpc_peering_connection" "peer" {
+│
