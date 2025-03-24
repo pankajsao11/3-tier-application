@@ -15,13 +15,25 @@ Each component is deployed in both Primary and Secondary regions for redundancy 
 
 ## AWS Services Used and Their Purpose
  
-A. Networking & Security
- 
-B. Compute Services
- 
-C. Load Balancing & DNS
- 
-D. Database Layer
+Service	Purpose
+
+EC2 Instances	                        Hosts Web and App tiers (2 instances per region).
+
+Application Load Balancer (ALB)	     Balances traffic between Web and App tiers.
+
+Amazon RDS         	                   Stores application data securely.
+
+Route 53	                               Manages DNS-based failover between regions.
+
+VPC & Subnets	                           Provides networking and segmentation.
+
+Security Groups	                        Controls traffic flow and ensures security.
+
+NAT Gateway	                             Allows private subnets to access the internet securely.
+
+VPC Peering (Optional)	                  Enables inter-region communication if required.
+
+
  
  
 ---
