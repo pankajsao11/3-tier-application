@@ -13,28 +13,37 @@ Networking & Security: VPC, Subnets, Security Groups, and NAT Gateway.
 
 Each component is deployed in both Primary and Secondary regions for redundancy and failover.
 
+---
+
 ## AWS Services Used and Their Purpose
- 
-Service	Purpose
 
-EC2 Instances	                        Hosts Web and App tiers (2 instances per region).
+## A. Networking & Security
 
-Application Load Balancer (ALB)	     Balances traffic between Web and App tiers.
+VPC (Virtual Private Cloud):	Isolates network resources and creates private/public subnets.
+Subnets:	Divides the VPC into logical segments (Web, App, DB layers).
+Internet Gateway (IGW):	Enables internet access for public subnets.
+NAT Gateway (NAT GW):	Allows private subnets to access the internet securely.
+Security Groups (SGs):	Controls inbound/outbound traffic for instances.
+Route Tables:	Directs network traffic within the VPC.
+VPC Peering (Optional):	Connects primary and secondary VPCs if needed.
 
-Amazon RDS         	                   Stores application data securely.
+## B. Compute Services
 
-Route 53	                               Manages DNS-based failover between regions.
+EC2 Instances (Web Tier):	Runs the frontend application.
+EC2 Instances (App Tier):	Processes business logic and API requests.
+Auto Scaling Group (ASG) (Optional):	Automatically scales instances based on traffic load.
 
-VPC & Subnets	                           Provides networking and segmentation.
+## C. Load Balancing & DNS
 
-Security Groups	                        Controls traffic flow and ensures security.
+Application Load Balancer (ALB):	Distributes traffic across web instances.
+Target Groups (TG):	Groups EC2 instances behind ALB for load balancing.
+Route 53 (DNS & Failover):	Manages DNS-based failover between regions.
 
-NAT Gateway	                             Allows private subnets to access the internet securely.
+## D. Database Layer
 
-VPC Peering (Optional)	                  Enables inter-region communication if required.
-
-
- 
+Amazon RDS:	Stores structured data for the application.
+Multi-AZ RDS: Replication	Provides failover redundancy in case of failure.
+Read Replicas (Optional):	Improves read performance by distributing database queries.
  
 ---
  
@@ -65,6 +74,8 @@ If the Primary Region fails (e.g., ALB is down, instances crash):
 2. Failover to Secondary Region: Route 53 automatically routes traffic to the Secondary ALB.
 3. Application Runs in Secondary Region: The web and app instances process user requests.
 4. Database Replication: The secondary RDS instance (read replica) is used until the primary region recovers.
+
+---
 
 ## Deployment Steps
  
@@ -102,10 +113,10 @@ terraform destroy -auto-approve
  
 ## Contributors
  
-https://github.com/pankajsao11/3-tier-application/commits?author=pankajsao11 - Cloud DevOps Engineer
+[@pankajsao11](https://github.com/pankajsao11) - Cloud DevOps Engineer
  
 ---
  
 ## License
  
-This project is licensed under the https://github.com/pankajsao11/3-tier-application#Apache-2.0-1-ov-file.
+This project is licensed under the [@Apache2](https://github.com/pankajsao11/3-tier-application#Apache-2.0-1-ov-file) License.
