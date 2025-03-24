@@ -15,6 +15,8 @@ Each component is deployed in both Primary and Secondary regions for redundancy 
 
 ---
 
+## Architecture Diagram
+
 ## AWS Services Used and Their Purpose
 
 ## A. Networking & Security
